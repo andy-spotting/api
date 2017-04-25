@@ -69,11 +69,13 @@ app.route('/spottings')
     };
 
     await datastore.save(entity);
-    return res.json(Object.assign(entity.data, {
-      id,
-      url: `${process.env.BASE_URL}/spottings/${id}`,
-      image: `https://storage.googleapis.com/andyspottingmedia/${filename}`,
-    }));
+    return res.status(201)
+      .location(`${process.env.BASE_URL}/spottings/${id}`)
+      .json(Object.assign(entity.data, {
+        id,
+        url: `${process.env.BASE_URL}/spottings/${id}`,
+        image: `https://storage.googleapis.com/andyspottingmedia/${filename}`,
+      }));
   })
   .options(sendOptions(['HEAD', 'GET', 'POST', 'OPTIONS']))
   .all(sendError(405));
