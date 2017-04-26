@@ -8,6 +8,7 @@ import multer from 'multer';
 import Parser from 'exif-parser';
 import uuidV1 from 'uuid/v1';
 import path from 'path';
+import ThumborUrlBuilder from 'thumbor-url-builder';
 import { sendError, sendOptions } from './utils';
 
 const app = express();
@@ -21,6 +22,7 @@ const storage = Storage({
   keyFilename: 'key.json',
 });
 const bucket = storage.bucket('andyspottingmedia');
+const thumborURL = new ThumborUrlBuilder(process.env.IMAGES_SECRET, process.env.IMAGES_URL);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -43,7 +45,10 @@ app.route('/spottings')
     res.json(spottings.map(s => Object.assign(s, {
       id: s[datastore.KEY].name,
       url: `${process.env.BASE_URL}/spottings/${s[datastore.KEY].name}`,
-      image: `https://storage.googleapis.com/andyspottingmedia/${s.image}`,
+      image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${s.image}`)
+        .resize(100, 100)
+        .smartCrop(true)
+        .buildUrl(),
     })));
   })
   .post(upload.single('photo'), async (req, res) => {
@@ -79,7 +84,10 @@ app.route('/spottings')
       .json(Object.assign(entity.data, {
         id,
         url: `${process.env.BASE_URL}/spottings/${id}`,
-        image: `https://storage.googleapis.com/andyspottingmedia/${filename}`,
+        image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${filename}`)
+          .resize(100, 100)
+          .smartCrop(true)
+          .buildUrl(),
       }));
   })
   .options(sendOptions(['HEAD', 'GET', 'POST', 'OPTIONS']))
