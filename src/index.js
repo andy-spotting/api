@@ -56,14 +56,19 @@ app.route('/spottings')
     const image = bucket.file(filename);
     await image.save(req.file.buffer, { public: true });
 
+    const timestamp = metadata.tags.DateTimeOriginal ?
+      new Date(metadata.tags.DateTimeOriginal) : new Date();
+
+    const location = datastore.geoPoint({
+      latitude: metadata.tags.GPSLatitude || Number(req.body.latitude),
+      longitude: metadata.tags.GPSLongitude || Number(req.body.longitude),
+    });
+
     const entity = {
       key: datastore.key(['Spotting', id]),
       data: {
-        timestamp: new Date(metadata.tags.DateTimeOriginal),
-        location: datastore.geoPoint({
-          latitude: metadata.tags.GPSLatitude,
-          longitude: metadata.tags.GPSLongitude,
-        }),
+        timestamp,
+        location,
         image: filename,
       },
     };
