@@ -9,7 +9,12 @@ import Parser from 'exif-parser';
 import uuidV1 from 'uuid/v1';
 import path from 'path';
 import ThumborUrlBuilder from 'thumbor-url-builder';
+import nowLogs from 'now-logs';
 import { sendError, sendOptions } from './utils';
+
+if (process.env.LOG_SECRET) {
+  nowLogs(process.env.LOG_SECRET);
+}
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
