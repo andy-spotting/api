@@ -67,7 +67,7 @@ app.route('/spottings')
     await image.save(req.file.buffer, { public: true });
 
     const timestamp = metadata.tags.DateTimeOriginal ?
-      new Date(metadata.tags.DateTimeOriginal) : new Date();
+      new Date(metadata.tags.DateTimeOriginal * 1000) : new Date();
 
     const location = datastore.geoPoint({
       latitude: metadata.tags.GPSLatitude || Number(req.body.latitude),
