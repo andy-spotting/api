@@ -40,7 +40,6 @@
     "helmet": "^3.5.0",
     "multer": "^1.3.0",
     "nodemon": "^1.11.0",
-    "now-logs": "0.0.7",
     "statuses": "^1.3.1",
     "thumbor-url-builder": "^0.1.1",
     "uuid": "^3.0.1"
@@ -50,8 +49,7 @@
     "env": {
       "BASE_URL": "https://api.andyspotting.com",
       "IMAGES_URL": "https://images.ajmay.co",
-      "IMAGES_SECRET": "@thumbor-security-key",
-      "LOG_SECRET": "@log-secret"
+      "IMAGES_SECRET": "@thumbor-security-key"
     },
     "files": [
       "src",
