@@ -101,7 +101,10 @@ app.route('/spottings/:id')
     res.json(Object.assign(result, {
       id: result[datastore.KEY].name,
       url: `${process.env.BASE_URL}/spottings/${result[datastore.KEY].name}`,
-      image: `https://storage.googleapis.com/andyspottingmedia/${result.image}`,
+      image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${result.image}`)
+          .resize(100, 100)
+          .smartCrop(true)
+          .buildUrl(),
     }));
   })
   .delete(async (req, res) => {
