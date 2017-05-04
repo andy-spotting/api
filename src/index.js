@@ -46,7 +46,7 @@ app.route('/spottings')
       id: s[datastore.KEY].name,
       url: `${process.env.BASE_URL}/spottings/${s[datastore.KEY].name}`,
       image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${s.image}`)
-        .resize(100, 100)
+        .resize(200, 200)
         .smartCrop(true)
         .buildUrl(),
     })));
@@ -85,7 +85,7 @@ app.route('/spottings')
         id,
         url: `${process.env.BASE_URL}/spottings/${id}`,
         image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${filename}`)
-          .resize(100, 100)
+          .resize(200, 200)
           .smartCrop(true)
           .buildUrl(),
       }));
@@ -102,7 +102,7 @@ app.route('/spottings/:id')
       id: result[datastore.KEY].name,
       url: `${process.env.BASE_URL}/spottings/${result[datastore.KEY].name}`,
       image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${result.image}`)
-          .resize(100, 100)
+          .resize(200, 200)
           .smartCrop(true)
           .buildUrl(),
     }));
