@@ -83,6 +83,7 @@ app.route('/spottings')
       .location(`${process.env.BASE_URL}/spottings/${id}`)
       .json(Object.assign(entity.data, {
         id,
+        location: location.value,
         url: `${process.env.BASE_URL}/spottings/${id}`,
         image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${filename}`)
           .resize(100, 100)
