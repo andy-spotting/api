@@ -29,27 +29,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 
-app.route('/')
+app
+  .route('/')
   .get((req, res) => res.json({
     spottings: `${process.env.BASE_URL}/spottings`,
   }))
   .options(sendOptions(['HEAD', 'GET', 'OPTIONS']))
   .all(sendError(405));
 
-app.route('/spottings')
+app
+  .route('/spottings')
   .get(async (req, res) => {
-    const [spottings] = await datastore.createQuery('Spotting')
+    const [spottings] = await datastore
+      .createQuery('Spotting')
       .order('timestamp', { descending: true })
       .run();
 
-    res.json(spottings.map(s => Object.assign(s, {
-      id: s[datastore.KEY].name,
-      url: `${process.env.BASE_URL}/spottings/${s[datastore.KEY].name}`,
-      image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${s.image}`)
-        .resize(200, 200)
-        .smartCrop(true)
-        .buildUrl(),
-    })));
+    res.json(
+      spottings.map(s => Object.assign(s, {
+        id: s[datastore.KEY].name,
+        url: `${process.env.BASE_URL}/spottings/${s[datastore.KEY].name}`,
+        image: thumborURL
+          .setImagePath(`https://storage.googleapis.com/andyspottingmedia/${s.image}`)
+          .resize(200, 200)
+          .smartCrop(true)
+          .buildUrl(),
+      })),
+    );
   })
   .post(upload.single('photo'), async (req, res) => {
     const parser = Parser.create(req.file.buffer);
@@ -61,8 +67,9 @@ app.route('/spottings')
     const image = bucket.file(filename);
     await image.save(req.file.buffer, { public: true });
 
-    const timestamp = metadata.tags.DateTimeOriginal ?
-      new Date(metadata.tags.DateTimeOriginal * 1000) : new Date();
+    const timestamp = metadata.tags.DateTimeOriginal
+      ? new Date(metadata.tags.DateTimeOriginal * 1000)
+      : new Date();
 
     const location = datastore.geoPoint({
       latitude: metadata.tags.GPSLatitude || Number(req.body.latitude),
@@ -79,34 +86,42 @@ app.route('/spottings')
     };
 
     await datastore.save(entity);
-    return res.status(201)
+    return res
+      .status(201)
       .location(`${process.env.BASE_URL}/spottings/${id}`)
-      .json(Object.assign(entity.data, {
-        id,
-        location: location.value,
-        url: `${process.env.BASE_URL}/spottings/${id}`,
-        image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${filename}`)
-          .resize(200, 200)
-          .smartCrop(true)
-          .buildUrl(),
-      }));
+      .json(
+        Object.assign(entity.data, {
+          id,
+          location: location.value,
+          url: `${process.env.BASE_URL}/spottings/${id}`,
+          image: thumborURL
+            .setImagePath(`https://storage.googleapis.com/andyspottingmedia/${filename}`)
+            .resize(200, 200)
+            .smartCrop(true)
+            .buildUrl(),
+        }),
+      );
   })
   .options(sendOptions(['HEAD', 'GET', 'POST', 'OPTIONS']))
   .all(sendError(405));
 
-app.route('/spottings/:id')
+app
+  .route('/spottings/:id')
   .get(async (req, res) => {
     const key = datastore.key(['Spotting', req.params.id]);
     const [result] = await datastore.get(key);
 
-    res.json(Object.assign(result, {
-      id: result[datastore.KEY].name,
-      url: `${process.env.BASE_URL}/spottings/${result[datastore.KEY].name}`,
-      image: thumborURL.setImagePath(`https://storage.googleapis.com/andyspottingmedia/${result.image}`)
+    res.json(
+      Object.assign(result, {
+        id: result[datastore.KEY].name,
+        url: `${process.env.BASE_URL}/spottings/${result[datastore.KEY].name}`,
+        image: thumborURL
+          .setImagePath(`https://storage.googleapis.com/andyspottingmedia/${result.image}`)
           .resize(200, 200)
           .smartCrop(true)
           .buildUrl(),
-    }));
+      }),
+    );
   })
   .delete(async (req, res) => {
     const key = datastore.key(['Spotting', req.params.id]);
@@ -119,7 +134,6 @@ app.route('/spottings/:id')
   .options(sendOptions(['HEAD', 'GET', 'DELETE', 'OPTIONS']))
   .all(sendError(405));
 
-app.route('*')
-  .all(sendError(404));
+app.route('*').all(sendError(404));
 
 app.listen(80);

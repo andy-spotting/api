@@ -48,4 +48,3 @@ jspm_packages
 
 dist/
 key.json
-docker-compose.override.yml

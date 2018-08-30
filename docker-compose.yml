@@ -1,12 +1,11 @@
 version: '3'
 services:
   api:
-    image: ajmay/api.andyspotting.com
-    build: .
-    command: npm run dev
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     volumes:
       - ./dist:/app/dist
-      - ./key.json:/app/key.json
     environment:
       VIRTUAL_HOST: api.andyspotting.docker
       BASE_URL: http://api.andyspotting.docker
@@ -14,8 +13,9 @@ services:
       IMAGES_SECRET: pa$$word
 
   watch:
-    image: ajmay/api.andyspotting.com
-    build: .
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     volumes:
       - ./dist:/app/dist
       - ./src:/app/src
