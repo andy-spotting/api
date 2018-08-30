@@ -1,0 +1,14 @@
+{
+  "name": "andyspotting-api",
+  "alias": "api.andyspotting.com",
+  "type": "docker",
+  "features": {
+    "cloud": "v2"
+  },
+  "env": {
+    "SERVICE_ACCOUNT": "@andyspotting-service_account",
+    "BASE_URL": "https://api.andyspotting.com",
+    "IMAGES_URL": "https://images.ajmay.co",
+    "IMAGES_SECRET": "@thumbor-security-key"
+  }
+}
